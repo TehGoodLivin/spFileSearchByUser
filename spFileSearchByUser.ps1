@@ -20,8 +20,8 @@
 #    SOFTWARE.
 #
 #    CHANGABLE VARIABLES
-$sitePath = "https://usaf.dps.mil/sites/52msg/CS/" # SITE PATH
-$email = "austin.livengood@spaceforce.mil" # SEARCH FOR USER BY EMAIL
+$sitePath = "" # SITE PATH
+$email = "" # SEARCH FOR USER BY EMAIL
 $parentSiteOnly = $false # SEARCH ONLY PARENT SITE AND IGNORE SUB SITES
 
 Connect-PnPOnline -Url $sitePath -UseWebLogin # CONNECT TO SPO
