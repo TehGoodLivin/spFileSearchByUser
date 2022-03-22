@@ -1,4 +1,4 @@
-#    DATE: 21 Mar 2022
+#    DATE: 22 Mar 2022
 #    UPDATED: 21 Mar 2022
 #    
 #    MIT License
@@ -20,8 +20,8 @@
 #    SOFTWARE.
 #
 #    CHANGABLE VARIABLES
-$sitePath = "" # SITE PATH
-$email = "" # SEARCH FOR USER BY EMAIL
+$sitePath = "https://usaf.dps.mil/sites/52msg/CS/SCX/SCXK/BRM/" # SITE PATH
+$email = "austin.livengood@spaceforce.mil" # SEARCH FOR USER BY EMAIL
 $parentSiteOnly = $false # SEARCH ONLY PARENT SITE AND IGNORE SUB SITES
 
 Connect-PnPOnline -Url $sitePath -UseWebLogin # CONNECT TO SPO
@@ -45,6 +45,7 @@ foreach ($DocLib in $getDocLibs) {
                 Write-Host "Error: 'Unable to pull file information'."
             } else {
                 if ($Item['Author'].Email -eq $email -or $Item['Editor'].Email -eq $email) {
+
                     if ($Item["FileLeafRef"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
                     if ($Item["File_x0020_Type"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
                     if ($Item["File_x0020_Size"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
@@ -53,12 +54,22 @@ foreach ($DocLib in $getDocLibs) {
                     if ($Item["Modified"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
                     if ($Item["Author"] -eq $null){ $Item["Author"] = 'INFO NOT FOUND' }
                     if ($Item["Editor"] -eq $null){ $Item["Editor"] = 'INFO NOT FOUND' }
+
+                    $permissions = @()
+                    $perm = Get-PnPProperty -ClientObject $Item -Property RoleAssignments       
+                    foreach ($role in $Item.RoleAssignments) {
+                        $loginName = Get-PnPProperty -ClientObject $role.Member -Property LoginName
+                        $rolebindings = Get-PnPProperty -ClientObject $role -Property RoleDefinitionBindings
+                        $permissions += "$($loginName) - $($rolebindings.Name)"
+                    }
+                    $permissions = $permissions | Out-String
            
                     $results = New-Object PSObject -Property @{
                         FileName = $Item["FileLeafRef"]
                         FileExtension = $Item["File_x0020_Type"]
                         FileSize = $Item["File_x0020_Size"]
                         Path = $Item["FileRef"]
+                        Permissions = $permissions
                         Created = $Item["Created"]
                         Modified = $Item["Modified"]
                         CreatedBy = $Item["Author"].Email
@@ -66,9 +77,9 @@ foreach ($DocLib in $getDocLibs) {
                     }
 
                     if (test-path $reportPath) {
-                        $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Created", "Modified", "CreatedBy", "ModifiedBy" | Export-Csv -Path $reportPath -Force -NoTypeInformation -Append
+                        $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Created", "Modified", "CreatedBy", "ModifiedBy" | Export-Csv -Path $reportPath -Force -NoTypeInformation -Append
                     } else {
-                        $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Created", "Modified", "CreatedBy", "ModifiedBy" | Export-Csv -Path $reportPath -Force -NoTypeInformation
+                        $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Created", "Modified", "CreatedBy", "ModifiedBy" | Export-Csv -Path $reportPath -Force -NoTypeInformation
                     }
                 }
             }
@@ -103,12 +114,22 @@ if ($parentSiteOnly -eq $false) {
                             if ($Item["Modified"] -eq $null){ $Item["FileLeafRef"] = 'INFO NOT FOUND' }
                             if ($Item["Author"] -eq $null){ $Item["Author"] = 'INFO NOT FOUND' }
                             if ($Item["Editor"] -eq $null){ $Item["Editor"] = 'INFO NOT FOUND' }
+
+                            $permissions = @()
+                            $perm = Get-PnPProperty -ClientObject $subItem -Property RoleAssignments       
+                            foreach ($role in $Item.RoleAssignments) {
+                                $loginName = Get-PnPProperty -ClientObject $role.Member -Property LoginName
+                                $rolebindings = Get-PnPProperty -ClientObject $role -Property RoleDefinitionBindings
+                                $permissions += "$($loginName) - $($rolebindings.Name)"
+                            }
+                            $permissions = $permissions | Out-String
            
                             $results = New-Object PSObject -Property @{
                                 FileName = $Item["FileLeafRef"]
                                 FileExtension = $Item["File_x0020_Type"]
                                 FileSize = $Item["File_x0020_Size"]
                                 Path = $Item["FileRef"]
+                                Permissions = $permissions
                                 Created = $Item["Created"]
                                 Modified = $Item["Modified"]
                                 CreatedBy = $Item["Author"].Email
@@ -116,9 +137,9 @@ if ($parentSiteOnly -eq $false) {
                             }
 
                             if (test-path $reportPath) {
-                                $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Created", "Modified", "CreatedBy", "ModifiedBy" | Export-Csv -Path $reportPath -Force -NoTypeInformation -Append
+                                $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Created", "Modified", "CreatedBy", "ModifiedBy" | Export-Csv -Path $reportPath -Force -NoTypeInformation -Append
                             } else {
-                                $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Created", "Modified", "CreatedBy", "ModifiedBy" | Export-Csv -Path $reportPath -Force -NoTypeInformation
+                                $results | Select-Object "FileName", "FileExtension", "FileSize", "Path", "Permissions", "Created", "Modified", "CreatedBy", "ModifiedBy" | Export-Csv -Path $reportPath -Force -NoTypeInformation
                             }
                         }
                     }
