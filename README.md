@@ -32,6 +32,7 @@ Within the Script, find the Varible $sitePath = "" and $email = "". Place your s
 - FileExtension
 - FileSize
 - Path
+- Permissions
 - Created
 - Modified
 - CreatedBy
