@@ -149,4 +149,5 @@ if ($parentSiteOnly -eq $false) {
     }
 }
 
+Write-Host "$(get-date -format yyyy/MM/dd-HH:mm:ss) - Script Complete" -ForegroundColor Green
 Disconnect-PnPOnline
