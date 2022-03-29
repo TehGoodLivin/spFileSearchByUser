@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 # spFileSearchByUser
-Used to find files that are created or modified by a specific user.
+A PowerShell Script designed to search for files created or modified by a specific user on SharePoint Online.
 
 ## How To Use
 Within the Script, find the Varible $sitePath = "" and $email = "". Place your site collection and the members email. Let the script run until its completed, and it will print a CVS file to the users desktop.
