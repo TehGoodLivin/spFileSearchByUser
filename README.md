@@ -24,7 +24,7 @@ SOFTWARE.
 # spFileSearchByUser
 A PowerShell Script designed to search for files created or modified by a specific user on SharePoint Online.
 
-## Install PnP PowerShell.
+## Install PnP PowerShell
 1.	Open “Windows PowerShell ISE”. You can type this in the windows search bar to find the exact program.
 
 2.	Run the following command: Install-Module -Name PnP.PowerShell -Scope CurrentUser
